@@ -1,20 +1,4 @@
-#!/usr/bin/env python3
-
-#  import numpy as np
-#  import tensorflow as tf
-#  from tensorflow import keras
-#  import os
-#  import time
-#  from matplotlib import pyplot as plt
 import argparse
-#  import math
-#  import random
-
-DATASET_PATH = ""
-NAME = "sample"
-BUFFER_SIZE = 1000
-BATCH_SIZE = 4
-IMG_SIZE = 256
 
 parser = argparse.ArgumentParser(description="A Demo")
 parser.add_argument("-n",
@@ -39,17 +23,23 @@ parser.add_argument("-bs",
                     Dependant on the amount of memory is at your disposal and
                     the size of the images being used. Defaults to 4.""",
                     type=int)
-parser.add_argument("-s",
-                    "--image-size",
-                    help="""Width and Height of the image, must be square.""")
 
 if __name__ == '__main__':
     import os
+    DATASET_PATH = ""
+    NAME = "sample"
+    BUFFER_SIZE = 1000
+    BATCH_SIZE = 4
+    IMG_SIZE = 256
 
     args = parser.parse_args()
 
     if not args.name:
         print("Using name 'sample' as no name was provided.")
+        print()
+    else:
+        NAME = args.name.replace(' ', '_')
+        print(f"Using {NAME} for the model name and directories.")
         print()
 
     dataset_count = 0
