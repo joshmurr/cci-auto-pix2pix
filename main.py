@@ -4,8 +4,14 @@ parser = argparse.ArgumentParser(description="A Demo")
 parser.add_argument("-n",
                     "--name",
                     help="""Name of the model. All files will be saved
-                    in a directory of this name.""")
-parser.add_argument("-d", "--dataset-path", help="Path to the dataset file.")
+                    in a directory of this name.""",
+                    type=str,
+                    default="pix2pix")
+parser.add_argument("-d",
+                    "--dataset-path",
+                    help="Path to the dataset file.",
+                    type=str,
+                    default="./dataset")
 # https://stackoverflow.com/questions/46444018/meaning-of-buffer-size-in-dataset-map-dataset-prefetch-and-dataset-shuffle
 parser.add_argument("-buf",
                     "--buffer-size",
@@ -26,12 +32,31 @@ parser.add_argument("-bs",
                     type=int,
                     default=4)
 
+
+def approx_equal(num, target):
+    return abs(num - target) < 5
+
+
+def check_files_in_directory(_dir):
+    extensions = set()
+    count = 0
+    for file in os.listdir(_dir):
+        file_path = _dir + '/' + file
+        if os.path.isfile(file_path):
+            count += 1
+            ext = os.path.splitext(file)[1]
+            extensions.add(ext)
+
+    return count, extensions
+
+
 if __name__ == '__main__':
     import os
-    DATASET_PATH = ""
-    NAME = "sample"
 
     args = parser.parse_args()
+
+    NAME = args.name
+    DATASET_PATH = args.dataset_path
 
     if not args.name:
         print("Using name 'sample' as no name was provided.")
@@ -42,36 +67,93 @@ if __name__ == '__main__':
         print()
 
     dataset_count = 0
-    if args.dataset_path and os.path.exists(args.dataset_path)\
-            and os.path.isdir(args.dataset_path):
+    if (args.dataset_path and os.path.exists(args.dataset_path)
+            and os.path.isdir(args.dataset_path)):
         DATASET_PATH = args.dataset_path
         print("Checking files in dataset directory...")
         print()
+
+        train_path = DATASET_PATH + '/train'
+        test_path = DATASET_PATH + '/test'
+
+        if not os.path.exists(train_path):
+            print(f"\t- Creating {train_path}")
+            os.mkdir(train_path)
+
+        if not os.path.exists(test_path):
+            print(f"\t- Creating {test_path}")
+            os.mkdir(test_path)
+
+        files_in_dataset_root, extensions_in_root = check_files_in_directory(
+            DATASET_PATH)
+
+        files_in_dataset_train, extensions_in_train = check_files_in_directory(
+            train_path)
+
+        files_in_dataset_test, extensions_in_test = check_files_in_directory(
+            test_path)
+
         extensions = set()
-        for file in os.listdir(DATASET_PATH):
-            dataset_count += 1
-            ext = os.path.splitext(file)[1]
-            extensions.add(ext)
-        print(f"Found {dataset_count} files with the extensions: {extensions}")
-        print()
+        extensions = extensions_in_root.union(extensions_in_train)
+        extensions = extensions.union(extensions_in_test)
 
-        if not os.path.exists(DATASET_PATH + '/train'):
-            os.mkdir(DATASET_PATH + '/train')
+        dataset_count = (files_in_dataset_root + files_in_dataset_train +
+                         files_in_dataset_test)
 
-        if not os.path.exists(DATASET_PATH + '/test'):
-            os.mkdir(DATASET_PATH + '/test')
+        if '.jpg' not in extensions:
+            print("Please provide a dataset of .jpg images.")
+            print()
+            exit()
+        else:
+            print(f"\t- Found {dataset_count} files with the extensions:" +
+                  "{extensions}")
+            print("\t- Only .jpg images will be used.")
+
+        if dataset_count < 400:
+            print("\t- Consider increasing the size of the dataset for " +
+                  "better results. Ideally above 400 images.")
+
+        if (len(extensions) > 1
+                and not os.path.exists(DATASET_PATH + '/unused_files')):
+            print(f"\t- Creating {args.dataset_path}/unused_files")
+            os.mkdir(DATASET_PATH + '/unused_files')
 
         four_fifths = (dataset_count // 5) * 4
 
-        for i, image_name in enumerate(os.listdir(DATASET_PATH)):
-            image_path = '/'.join((DATASET_PATH, image_name))
-            train_path = '/'.join((DATASET_PATH, 'train/'))
-            test_path = '/'.join((DATASET_PATH, 'test/'))
-            if os.path.isfile(image_path):
-                if i <= four_fifths:
-                    os.rename(image_path, train_path + image_name)
-                else:
-                    os.rename(image_path, test_path + image_name)
+        if ((files_in_dataset_train and files_in_dataset_test)
+                and (approx_equal(files_in_dataset_train, four_fifths)
+                     and approx_equal(files_in_dataset_test,
+                                      dataset_count - four_fifths))):
+            print("\t* Dataset already organised!")
+            print()
+        else:
+            print(f"\t- Splitting dataset 4:1 into {args.dataset_path}/" +
+                  f"train and {args.dataset_path}/test respectively.")
+            for file in os.listdir(train_path):
+                file_path = train_path + '/' + file
+                new_path = DATASET_PATH + '/' + file
+                os.rename(file_path, new_path)
+            for file in os.listdir(test_path):
+                file_path = test_path + '/' + file
+                new_path = DATASET_PATH + '/' + file
+                os.rename(file_path, new_path)
+
+            unused_path = DATASET_PATH + '/unused_files'
+
+            for i, image_name in enumerate(os.listdir(DATASET_PATH)):
+                image_path = DATASET_PATH + '/' + image_name
+                if os.path.isfile(image_path):
+                    if os.path.splitext(image_name)[1] == '.jpg':
+                        if i <= four_fifths:
+                            os.rename(image_path,
+                                      train_path + '/' + image_name)
+                        else:
+                            os.rename(image_path, test_path + '/' + image_name)
+
+                    else:
+                        print(f"\t- Moving {image_path} into " +
+                              "{args.dataset_path}/unused_files.")
+                        os.rename(image_path, unused_path + image_name)
 
     else:
         print("""
@@ -101,8 +183,9 @@ if __name__ == '__main__':
     print("Creating Dataset...")
     print()
 
-    print(args)
-
-    from dataset import Dataset
-
-    Dataset = Dataset(args)
+    #  from dataset import Dataset
+#
+#  Dataset = Dataset(name=NAME,
+#  dataset_path=DATASET_PATH,
+#  buffer_size=args.buffer_size,
+#  batch_size=args.batch_size)

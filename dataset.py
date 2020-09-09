@@ -9,13 +9,13 @@ import random
 
 
 class Dataset:
-    def __init__(self, dataset_path, name, buffer_size, batch_size):
-        self.path = dataset_path
-        self.name = name
+    def __init__(self, args):
+        self.path = args.dataset_path
+        self.name = args.name
         self.image_size = 256
 
         self.train_dataset, self.test_dataset = self.init_dataset(
-            dataset_path, buffer_size, batch_size)
+            args.dataset_path, args.buffer_size, args.batch_size)
 
     def init_dataset(self, dataset_path, buffer_size, batch_size):
         train_dataset = tf.data.Dataset.list_files(dataset_path +
