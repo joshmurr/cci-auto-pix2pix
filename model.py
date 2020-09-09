@@ -1,13 +1,7 @@
-#  import numpy as np
 import tensorflow as tf
 import os
 import time
-#  from tensorflow import keras
-#  import os
-#  import time
 from matplotlib import pyplot as plt
-#  import math
-#  import random
 
 
 class Model:
