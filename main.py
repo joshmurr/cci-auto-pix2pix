@@ -238,4 +238,20 @@ if __name__ == '__main__':
     from model import Model
     print()
     print("Creating Model...")
-    model = Model(Dataset, saves_root)
+    model = Model(dataset, saves_root)
+
+    print()
+    print(f"!!! Model training for {args.epochs}" +
+          f" EPOCH{'S' if args.epochs > 1 else ''} !!!")
+    print()
+
+    model.fit(args.epochs)
+
+    print()
+    print("Finished training!")
+    print()
+    print("Saving models...")
+
+    model.save_models()
+
+    print("Done!")

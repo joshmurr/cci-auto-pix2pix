@@ -5,7 +5,7 @@ import time
 #  from tensorflow import keras
 #  import os
 #  import time
-#  from matplotlib import pyplot as plt
+from matplotlib import pyplot as plt
 #  import math
 #  import random
 
@@ -21,7 +21,9 @@ class Model:
         self.generator_optimizer = tf.keras.optimizers.Adam(2e-4, beta_1=0.5)
         self.discriminator_optimizer = tf.keras.optimizers.Adam(2e-4,
                                                                 beta_1=0.5)
-        self.checkpoint_prefix = os.path.join(root_dir, 'checkpoints')
+        self.root_dir = root_dir
+        self.checkpoint_dir = os.path.join(root_dir, 'checkpoints')
+        self.checkpoint_prefix = os.path.join(self.checkpoint_dir, 'chkpt')
         self.checkpoint = tf.train.Checkpoint(
             generator_optimizer=self.generator_optimizer,
             discriminator_optimizer=self.discriminator_optimizer,
@@ -203,17 +205,25 @@ class Model:
                 zip(discriminator_gradients,
                     self.discriminator.trainable_variables))
 
-    def fit(self, train_ds, epochs, test_ds):
+    def save_images(self, model, dataset, dir, n):
+        for inp, tar in dataset.take(1):
+            prediction = model(inp, training=True)
+            fig = plt.figure(figsize=(15, 15))
+            plt.imshow(prediction[0] * 0.5 + 0.5)
+            plt.axis('off')
+            fig.savefig('{}/{}.png'.format(dir, n))
+
+    def fit(self, epochs):
         for epoch in range(epochs):
             start = time.time()
 
-            for example_input, example_target in test_ds.take(1):
-                self.generate_images(self.generator, example_input,
-                                     example_target)
+            self.save_images(self.generator, self.dataset.test_dataset,
+                             os.path.join(self.root_dir, 'figures'), epoch)
             print("Epoch: ", epoch)
 
             # Train
-            for n, (input_image, target) in train_ds.enumerate():
+            for n, (input_image,
+                    target) in self.dataset.train_dataset.enumerate():
                 print('.', end='')
                 if (n + 1) % 100 == 0:
                     print()
@@ -222,9 +232,14 @@ class Model:
 
             # saving (checkpoint) the model every 20 epochs
             if (epoch + 1) % 20 == 0:
-                self.heckpoint.save(file_prefix=self.checkpoint_prefix)
+                self.checkpoint.save(file_prefix=self.checkpoint_prefix)
 
             print('Time taken for epoch {} is {} sec\n'.format(
                 epoch + 1,
                 time.time() - start))
         self.checkpoint.save(file_prefix=self.checkpoint_prefix)
+
+    def save_models(self):
+        self.generator.save(os.path.join(self.root_dir, 'models/generator.h5'))
+        self.discriminator.save(
+            os.path.join(self.root_dir, 'models/discriminator.h5'))
