@@ -58,8 +58,8 @@ def check_files_in_directory(_dir):
 
 
 def print_details(args):
-    print("{:>15}\t--- {}".format("PROGRAM", "DETAILS"))
-    print("{:->14}\t--- {:-<14}".format('-', '-'))
+    print("PROGRAM DETAILS")
+    print("-" * 15)
     for item in vars(args):
         print(f"{item.upper():>15}\t--- {vars(args)[item]}")
     print()
@@ -201,10 +201,10 @@ if __name__ == '__main__':
 
     from dataset import Dataset
     print("Creating Dataset...")
-    dataset = Dataset(name=NAME,
-                      dataset_path=DATASET_PATH,
-                      buffer_size=args.buffer_size,
-                      batch_size=args.batch_size)
+    #  dataset = Dataset(name=NAME,
+    #  dataset_path=DATASET_PATH,
+    #  buffer_size=args.buffer_size,
+    #  batch_size=args.batch_size)
 
     print()
     print("Creating relevenat directories to save the model, " +
@@ -238,4 +238,4 @@ if __name__ == '__main__':
     from model import Model
     print()
     print("Creating Model...")
-    model = Model(Dataset, saves_root)
+    #  model = Model(Dataset, saves_root)
