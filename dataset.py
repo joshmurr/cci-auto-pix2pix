@@ -1,21 +1,17 @@
-#  import numpy as np
 import tensorflow as tf
-#  from tensorflow import keras
-#  import os
-#  import time
-#  from matplotlib import pyplot as plt
 import math
 import random
 
 
 class Dataset:
-    def __init__(self, args):
-        self.path = args.dataset_path
-        self.name = args.name
+    def __init__(self, **kwargs):
+        print(kwargs)
+        self.path = kwargs['dataset_path']
+        self.name = kwargs['name']
         self.image_size = 256
 
         self.train_dataset, self.test_dataset = self.init_dataset(
-            args.dataset_path, args.buffer_size, args.batch_size)
+            self.path, kwargs['buffer_size'], kwargs['batch_size'])
 
     def init_dataset(self, dataset_path, buffer_size, batch_size):
         train_dataset = tf.data.Dataset.list_files(dataset_path +

@@ -1,15 +1,17 @@
-import numpy as np
+#  import numpy as np
 import tensorflow as tf
-from tensorflow import keras
 import os
 import time
-from matplotlib import pyplot as plt
-import math
-import random
+#  from tensorflow import keras
+#  import os
+#  import time
+#  from matplotlib import pyplot as plt
+#  import math
+#  import random
 
 
 class Model:
-    def __init__(self, dataset):
+    def __init__(self, dataset, root_dir):
         self.output_channels = 3
         self._lambda = 100
         self.loss_object = tf.keras.losses.BinaryCrossentropy(from_logits=True)
@@ -19,6 +21,12 @@ class Model:
         self.generator_optimizer = tf.keras.optimizers.Adam(2e-4, beta_1=0.5)
         self.discriminator_optimizer = tf.keras.optimizers.Adam(2e-4,
                                                                 beta_1=0.5)
+        self.checkpoint_prefix = os.path.join(root_dir, 'checkpoints')
+        self.checkpoint = tf.train.Checkpoint(
+            generator_optimizer=self.generator_optimizer,
+            discriminator_optimizer=self.discriminator_optimizer,
+            generator=self.generator,
+            discriminator=self.discriminator)
 
     def downsample(self, filters, size, apply_batchnorm=True):
         initializer = tf.random_normal_initializer(0., 0.02)
@@ -168,3 +176,55 @@ class Model:
         total_disc_loss = real_loss + generated_loss
 
         return total_disc_loss
+
+    @tf.function
+    def train_step(self, input_image, target, epoch):
+        with tf.GradientTape() as gen_tape, tf.GradientTape() as disc_tape:
+            gen_output = self.generator(input_image, training=True)
+
+            disc_real_output = self.discriminator([input_image, target],
+                                                  training=True)
+            disc_generated_output = self.discriminator(
+                [input_image, gen_output], training=True)
+
+            gen_total_loss, gen_gan_loss, gen_l1_loss = self.generator_loss(
+                disc_generated_output, gen_output, target)
+            disc_loss = self.discriminator_loss(disc_real_output,
+                                                disc_generated_output)
+
+            generator_gradients = gen_tape.gradient(
+                gen_total_loss, self.generator.trainable_variables)
+            discriminator_gradients = disc_tape.gradient(
+                disc_loss, self.discriminator.trainable_variables)
+
+            self.generator_optimizer.apply_gradients(
+                zip(generator_gradients, self.generator.trainable_variables))
+            self.discriminator_optimizer.apply_gradients(
+                zip(discriminator_gradients,
+                    self.discriminator.trainable_variables))
+
+    def fit(self, train_ds, epochs, test_ds):
+        for epoch in range(epochs):
+            start = time.time()
+
+            for example_input, example_target in test_ds.take(1):
+                self.generate_images(self.generator, example_input,
+                                     example_target)
+            print("Epoch: ", epoch)
+
+            # Train
+            for n, (input_image, target) in train_ds.enumerate():
+                print('.', end='')
+                if (n + 1) % 100 == 0:
+                    print()
+                self.train_step(input_image, target, epoch)
+            print()
+
+            # saving (checkpoint) the model every 20 epochs
+            if (epoch + 1) % 20 == 0:
+                self.heckpoint.save(file_prefix=self.checkpoint_prefix)
+
+            print('Time taken for epoch {} is {} sec\n'.format(
+                epoch + 1,
+                time.time() - start))
+        self.checkpoint.save(file_prefix=self.checkpoint_prefix)

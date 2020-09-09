@@ -106,7 +106,7 @@ if __name__ == '__main__':
             exit()
         else:
             print(f"\t- Found {dataset_count} files with the extensions:" +
-                  "{extensions}")
+                  f"{extensions}")
             print("\t- Only .jpg images will be used.")
 
         if dataset_count < 400:
@@ -180,12 +180,45 @@ if __name__ == '__main__':
         print(f"Using provided Buffer Size of {args.buffer_size}")
         print()
 
-    print("Creating Dataset...")
-    print()
+    print("Importing Tensorflow...")
 
-    #  from dataset import Dataset
-#
-#  Dataset = Dataset(name=NAME,
-#  dataset_path=DATASET_PATH,
-#  buffer_size=args.buffer_size,
-#  batch_size=args.batch_size)
+    from dataset import Dataset
+    print("Creating Dataset...")
+    dataset = Dataset(name=NAME,
+                      dataset_path=DATASET_PATH,
+                      buffer_size=args.buffer_size,
+                      batch_size=args.batch_size)
+
+    print()
+    print("Creating relevenat directories to save the model, " +
+          "logs and checkpoints.")
+
+    saves_root = f"./{NAME}"
+    if not os.path.exists(saves_root):
+        print(f"\t- Creating {saves_root}")
+        os.mkdir(saves_root)
+
+    saves_figures = f"{saves_root}/figures"
+    if not os.path.exists(saves_figures):
+        print(f"\t- Creating {saves_figures}")
+        os.mkdir(saves_figures)
+
+    saves_checkpoints = f"{saves_root}/checkpoints"
+    if not os.path.exists(saves_checkpoints):
+        print(f"\t- Creating {saves_checkpoints}")
+        os.mkdir(saves_checkpoints)
+
+    saves_logs = f"{saves_root}/logs"
+    if not os.path.exists(saves_logs):
+        print(f"\t- Creating {saves_logs}")
+        os.mkdir(saves_logs)
+
+    saves_models = f"{saves_root}/models"
+    if not os.path.exists(saves_models):
+        print(f"\t- Creating {saves_models}")
+        os.mkdir(saves_models)
+
+    from model import Model
+    print()
+    print("Creating Model...")
+    model = Model(Dataset, saves_root)
