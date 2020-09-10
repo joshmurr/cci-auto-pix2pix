@@ -75,6 +75,10 @@ An output folder structure like so is created:
 
 An sample output from the generator is saved to `figures` each epoch; `checkpoints` provide the option to resume training if it fails and the `models` are saved as `.h5`'s which are more useful when using the [TensorflowJS-Converter](https://github.com/tensorflow/tfjs-converter).
 
+Here is a stressful `GIF` of the training figures produced using a dataset from [this video of fungi growing](https://www.youtube.com/watch?v=CvfLSv0sfb0) (a link to the full Colab notebook can be found at the bottom of this README).
+
+![Fungus Training GIF](./fungus_training.gif)
+
 ---
 
 ### Google Colab Usage
