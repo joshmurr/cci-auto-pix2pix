@@ -79,6 +79,13 @@ Here is a stressful `GIF` of the training figures produced using a dataset from 
 
 ![Fungus Training GIF](./fungus_training.gif)
 
+An easy way to make `GIF`'s:
+
+```bash
+$ cd {{Name of Model}}/figures
+$ ffmpeg -i %d.png {{Output Name}}.gif
+```
+
 ---
 
 ### Google Colab Usage
