@@ -73,7 +73,9 @@ An output folder structure like so is created:
 
 An sample output from the generator is saved to `figures` each epoch; `checkpoints` provide the option to resume training if it fails and the `models` are saved as `.h5`'s which are more useful when using the [TensorflowJS-Converter](https://github.com/tensorflow/tfjs-converter).
 
-[A full run through no Google Colab can be seen here.](https://github.com/joshmurr/cci-auto-pix2pix/blob/master/pix2pix_fungus.ipynb)
+---
+
+## [A full run through no Google Colab can be seen here.](https://github.com/joshmurr/cci-auto-pix2pix/blob/master/pix2pix_fungus.ipynb)
 
 
 [tf-p2p]: https://www.tensorflow.org/tutorials/generative/pix2pix
