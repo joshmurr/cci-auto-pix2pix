@@ -206,6 +206,7 @@ class Model:
             plt.imshow(prediction[0] * 0.5 + 0.5)
             plt.axis('off')
             fig.savefig('{}/{}.png'.format(dir, n))
+            plt.close()
 
     def fit(self, epochs):
         for epoch in range(epochs):
