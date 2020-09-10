@@ -1,6 +1,8 @@
 ## Auto pix2pix
 
-Packaging up the [Tensorflow implementation][tf-p2p] of the [pix2pix][p2p-paper] model into a pair of classes to help simplify and speed up the process of training and saving models for rapid protoyping.
+Packaging up the [Tensorflow implementation][tf-p2p] of the [pix2pix][p2p-paper] model into a pair of classes to help simplify and speed up the process of training and saving models for rapid protoyping. The model has been modified in the style of [Learning to See][lts-paper] by Memo Akten et al. The modification allows for a dataset of single images (rather than pairs) and a preprocessing of the image to a blurry-greyscale version is used to train the model.
+
+![Greyscale2Flower](./b1.png)
 
 A shell script called `frame_extractor.sh` was created to quickly create a dataset from a video. In particular timelapse videos downloaded from YouTube using [youtube-dl][yt-dl] have been pretty good.
 
@@ -57,6 +59,19 @@ python3 main.py -d {{Dataset Path}} -n {{Name of Model}} -e {{Epochs}}
 ```
 
 Again, in the name of rapid prototyping, 50-100 epochs at 256x256 works fine.
+
+An output folder structure like so is created:
+
+```
+.
+├── {{Name of Model}}
+│   ├── checkpoints
+│   ├── figures
+│   └── models
+.
+```
+
+An sample output from the generator is saved to `figures` each epoch; `checkpoints` provide the option to resume training if it fails and the `models` are saved as `.h5`'s which are more useful when using the [TensorflowJS-Converter](https://github.com/tensorflow/tfjs-converter).
 
 [A full run through no Google Colab can be seen here.](https://github.com/joshmurr/cci-auto-pix2pix/blob/master/pix2pix_fungus.ipynb)
 

@@ -210,7 +210,7 @@ if __name__ == '__main__':
 
     print()
     print("Creating relevenat directories to save the model, " +
-          "logs and checkpoints.")
+          "figures and checkpoints.")
 
     saves_root = f"./{NAME}"
     if not os.path.exists(saves_root):
@@ -226,11 +226,6 @@ if __name__ == '__main__':
     if not os.path.exists(saves_checkpoints):
         print(f"\t- Creating {saves_checkpoints}")
         os.mkdir(saves_checkpoints)
-
-    saves_logs = f"{saves_root}/logs"
-    if not os.path.exists(saves_logs):
-        print(f"\t- Creating {saves_logs}")
-        os.mkdir(saves_logs)
 
     saves_models = f"{saves_root}/models"
     if not os.path.exists(saves_models):
