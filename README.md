@@ -4,6 +4,8 @@ Packaging up the [Tensorflow implementation][tf-p2p] of the [pix2pix][p2p-paper]
 
 ![Greyscale2Flower](./flower.png)
 
+The intended use is inside a Docker container or on Google Colab so no provisions have been made to install the relevant drivers. Tensorflow is the only external dependancy any way so it should run out-the-box regardless (if you have Tensorflow installed). 
+
 A shell script called `frame_extractor.sh` was created to quickly create a dataset from a video. In particular timelapse videos downloaded from YouTube using [youtube-dl][yt-dl] have been pretty good.
 
 ---
@@ -75,7 +77,25 @@ An sample output from the generator is saved to `figures` each epoch; `checkpoin
 
 ---
 
-## [A full run through no Google Colab can be seen here.](https://github.com/joshmurr/cci-auto-pix2pix/blob/master/pix2pix_fungus.ipynb)
+### Google Colab Usage
+
+Cloning the repository into a Colab environment:
+
+```
+# Inside a Colab notebook:
+!git clone https://github.com/joshmurr/cci-auto-pix2pix
+```
+
+_Run the same steps as above_
+
+To save the results to your Google Drive once the program has finished:
+```python
+from google.colab import drive
+drive.mount('/content/drive')
+!cp -r ./{{Model Name}} /content/drive/My\ Drive/ # I think this is the same path for everyone, including 'My\ Drive'
+```
+
+## [A full run through on Google Colab can be seen here.](https://github.com/joshmurr/cci-auto-pix2pix/blob/master/pix2pix_fungus.ipynb)
 
 
 [tf-p2p]: https://www.tensorflow.org/tutorials/generative/pix2pix
