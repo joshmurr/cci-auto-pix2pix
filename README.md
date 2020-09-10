@@ -2,7 +2,7 @@
 
 Packaging up the [Tensorflow implementation][tf-p2p] of the [pix2pix][p2p-paper] model into a pair of classes to help simplify and speed up the process of training and saving models for rapid protoyping. The model has been modified in the style of [Learning to See][lts-paper] by Memo Akten et al. The modification allows for a dataset of single images (rather than pairs) and a preprocessing of the image to a blurry-greyscale version is used to train the model.
 
-![Greyscale2Flower](./b1.png)
+![Greyscale2Flower](./flower.png)
 
 A shell script called `frame_extractor.sh` was created to quickly create a dataset from a video. In particular timelapse videos downloaded from YouTube using [youtube-dl][yt-dl] have been pretty good.
 
