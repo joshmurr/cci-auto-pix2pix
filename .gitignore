@@ -2,3 +2,4 @@ dataset
 *.swp
 __pycache__
 TestName
+.DS_Store

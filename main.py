@@ -1,6 +1,8 @@
 import argparse
 
-parser = argparse.ArgumentParser(description="A Demo")
+parser = argparse.ArgumentParser(
+    description="""A class based implementation of the
+Tensorflow pix2pix model.""")
 parser.add_argument("-n",
                     "--name",
                     help="""Name of the model. All files will be saved
