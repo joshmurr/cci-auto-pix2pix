@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # USAGE: 
-# ./frame_extractor.sh {{INPUT DIR}} {{OUTPUT DIR}} {{NUM FRAMES FROM EACH VID}}
+# ./frame_extractor.sh {{INPUT FILE}} {{OUTPUT DIR}} {{NUM FRAMES FROM EACH VID}} {{SCALE}}
 
 FILE=$1
 OUTPUT_DIR=$2
@@ -35,9 +35,16 @@ if [[ "$suffix" =~ ^(${extensions})$ ]]; then
   ffmpeg -y -hide_banner -loglevel warning -accurate_seek -ss 00:00:00\
     -i "$FILE" -frames:v 1 -vf scale="$SCALE" ${TMP}
 
-  wh=$(identify -format '%w %h' "$TMP")
-  w=$(echo $wh | cut -f1 -d' ')
-  h=$(echo $wh | cut -f2 -d' ')
+  w=0;
+  h=0;
+
+  {
+    wh=$(identify -format '%w %h' "$TMP")
+    w=$(echo $wh | cut -f1 -d' ')
+    h=$(echo $wh | cut -f2 -d' ')
+  } || {
+    echo "Please install 'identify' which is part of the 'ImageMagick' package"
+  }
 
   diff=$(( w - h ))
 

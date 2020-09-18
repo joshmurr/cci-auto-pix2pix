@@ -1,12 +1,18 @@
 import tensorflow as tf
 import os
 import time
+import numpy as np
+# import numLayers from utils
 from matplotlib import pyplot as plt
 
 
 class Model:
-    def __init__(self, dataset, root_dir):
+    def __init__(self, dataset, root_dir, input_size, output_size):
         self.output_channels = 3
+        self.input_size = np.array(input_size)
+        self.input_size = np.append(self.input_size, 1)
+        self.output_size = np.array(output_size)
+        self.output_size = np.append(self.output_size, 1)
         self._lambda = 100
         self.loss_object = tf.keras.losses.BinaryCrossentropy(from_logits=True)
         self.dataset = dataset
@@ -63,7 +69,8 @@ class Model:
         return result
 
     def Generator(self):
-        inputs = tf.keras.layers.Input(shape=[256, 256, 1])
+        # inputs = tf.keras.layers.Input(shape=[256, 256, 1])
+        inputs = tf.keras.layers.Input(shape=self.input_size)
 
         down_stack = [
             self.downsample(64, 4,

@@ -1,4 +1,5 @@
 import argparse
+import math
 
 parser = argparse.ArgumentParser(
     description="""A class based implementation of the
@@ -40,6 +41,25 @@ parser.add_argument("-e",
                     and a dataset of 1000 images.""",
                     type=int,
                     default=50)
+parser.add_argument("-is",
+                    "--input-size",
+                    help="""Dimensions of input image. Input with whitespace
+                    eg. 256 256. Stick to powers of 2.""",
+                    type=int,
+                    nargs='+',
+                    default=(256, 256))
+parser.add_argument("-os",
+                    "--output-size",
+                    help="""Dimensions of output image. Input with whitespace
+                    eg. 256 256. Stick to powers of 2.""",
+                    type=int,
+                    nargs='+',
+                    default=(256, 256))
+parser.add_argument("-dum",
+                    "--dummy-run",
+                    help="""Don't actually run a model to check arguments.""",
+                    type=bool,
+                    default=False)
 
 
 def approx_equal(num, target):
@@ -67,6 +87,14 @@ def print_details(args):
     print()
 
 
+def Log2(x):
+    return math.log10(x) / math.log10(2)
+
+
+def isPowerOfTwo(x):
+    return (math.ceil(Log2(x)) == math.floor(Log2(x)))
+
+
 if __name__ == '__main__':
     import os
 
@@ -74,6 +102,30 @@ if __name__ == '__main__':
 
     NAME = args.name
     DATASET_PATH = args.dataset_path
+    INPUT_SIZE = None
+    OUTPUT_SIZE = None
+
+    if not args.input_size[0] == args.input_size[1]:
+        print("Input size must be square!")
+        print()
+        exit()
+
+    elif not args.output_size[0] == args.output_size[1]:
+        print("Output size must be square!")
+        print()
+        exit()
+
+    elif not isPowerOfTwo(args.input_size[0]) or not isPowerOfTwo(
+            args.output_size[0]):
+        print("Please stick to an input size or output size" +
+              " which is a power of 2!")
+        print()
+        exit()
+
+    else:
+        INPUT_SIZE = tuple(args.input_size)
+        OUTPUT_SIZE = tuple(args.output_size)
+        print(INPUT_SIZE, OUTPUT_SIZE)
 
     if not args.name:
         print("Using name 'sample' as no name was provided.")
@@ -232,23 +284,27 @@ if __name__ == '__main__':
         print(f"\t- Creating {saves_models}")
         os.mkdir(saves_models)
 
-    from model import Model
-    print()
-    print("Creating Model...")
-    model = Model(dataset, saves_root)
+    if not args.dummy_run:
+        from model import Model
+        print()
+        print("Creating Model...")
+        model = Model(dataset, saves_root)
 
-    print()
-    print(f"!!! Model training for {args.epochs}" +
-          f" EPOCH{'S' if args.epochs > 1 else ''} !!!")
-    print()
+        print()
+        print(f"!!! Model training for {args.epochs}" +
+              f" EPOCH{'S' if args.epochs > 1 else ''} !!!")
+        print()
 
-    model.fit(args.epochs)
+        model.fit(args.epochs)
 
-    print()
-    print("Finished training!")
-    print()
-    print("Saving models...")
+        print()
+        print("Finished training!")
+        print()
+        print("Saving models...")
 
-    model.save_models()
+        model.save_models()
+    else:
+        print("~~~ DUMMY RUN ~~~")
+        print()
 
     print("Done!")
