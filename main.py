@@ -2,62 +2,65 @@ import argparse
 import math
 
 parser = argparse.ArgumentParser(
-    description="""A class based implementation of the
-Tensorflow pix2pix model.""")
-parser.add_argument("-n",
-                    "--name",
-                    help="""Name of the model. All files will be saved
-                    in a directory of this name.""",
-                    type=str,
-                    default="pix2pix")
+    description="A class based implementation of the " +
+    "Tensorflow pix2pix model.")
+parser.add_argument(
+    "-n",
+    "--name",
+    help="Name of the model. All files will be saved in a directory " +
+    "of this name.",
+    type=str,
+    default="pix2pix")
 parser.add_argument("-d",
                     "--dataset-path",
                     help="Path to the dataset file.",
                     type=str,
                     default="./dataset")
 # https://stackoverflow.com/questions/46444018/meaning-of-buffer-size-in-dataset-map-dataset-prefetch-and-dataset-shuffle
-parser.add_argument("-buf",
-                    "--buffer-size",
-                    help="""Affects how uniform the shuffling is:
-                    if buffer_size is greater than the number of elements
-                    in the dataset, you get a uniform shuffle;
-                    if it is 1 then you get no shuffling at all.
-                    If the dataset is not too large (approx 1000 images) then
-                    the total size of the dataset is recommended.""",
-                    type=int,
-                    default=1000)
+parser.add_argument(
+    "-buf",
+    "--buffer-size",
+    help="Affects how uniform the shuffling is: if buffer_size " +
+    "is greater than the number of elements in the dataset, you " +
+    "get a uniform shuffle; if it is 1 then you get no shuffling " +
+    "at all.  If the dataset is not too large (approx 1000 images) " +
+    "then the total size of the dataset is recommended.",
+    type=int,
+    default=1000)
 # https://dmitry.ai/t/topic/100
-parser.add_argument("-bs",
-                    "--batch-size",
-                    help="""Batch size to feed into the network when training.
-                    Dependant on the amount of memory is at your disposal and
-                    the size of the images being used. Defaults to 4.""",
-                    type=int,
-                    default=4)
-parser.add_argument("-e",
-                    "--epochs",
-                    help="""Number of full training cycles. 50 will yield
-                    decent enough results with an image size of 256x256
-                    and a dataset of 1000 images.""",
-                    type=int,
-                    default=50)
-parser.add_argument("-is",
-                    "--input-size",
-                    help="""Dimensions of input image. Input with whitespace
-                    eg. 256 256. Stick to powers of 2.""",
-                    type=int,
-                    nargs='+',
-                    default=(256, 256))
-parser.add_argument("-os",
-                    "--output-size",
-                    help="""Dimensions of output image. Input with whitespace
-                    eg. 256 256. Stick to powers of 2.""",
-                    type=int,
-                    nargs='+',
-                    default=(256, 256))
+parser.add_argument(
+    "-bs",
+    "--batch-size",
+    help="Batch size to feed into the network when training. " +
+    "Dependant on the amount of memory is at your disposal and " +
+    "the size of the images being used. Defaults to 4.",
+    type=int,
+    default=4)
+parser.add_argument(
+    "-e",
+    "--epochs",
+    help="Number of full training cycles. 50 will yield  decent " +
+    "enough results with an image size of 256x256 and a dataset " +
+    "of 1000 images.",
+    type=int,
+    default=50)
+parser.add_argument(
+    "-is",
+    "--input-size",
+    help="Dimensions of input image. Input single number which " +
+    "is a power of 2",
+    type=int,
+    default=256)
+parser.add_argument(
+    "-os",
+    "--output-size",
+    help="Dimensions of input image. Input single number which " +
+    "is a power of 2",
+    type=int,
+    default=256)
 parser.add_argument("-dum",
                     "--dummy-run",
-                    help="""Don't actually run a model to check arguments.""",
+                    help="Don't actually run a model to check arguments.",
                     type=bool,
                     default=False)
 
@@ -284,17 +287,17 @@ if __name__ == '__main__':
         print(f"\t- Creating {saves_models}")
         os.mkdir(saves_models)
 
+    from model import Model
+    print()
+    print("Creating Model...")
+    model = Model(dataset, saves_root, INPUT_SIZE, OUTPUT_SIZE)
+
+    print()
+    print(f"!!! Model training for {args.epochs}" +
+          f" EPOCH{'S' if args.epochs > 1 else ''} !!!")
+    print()
+
     if not args.dummy_run:
-        from model import Model
-        print()
-        print("Creating Model...")
-        model = Model(dataset, saves_root)
-
-        print()
-        print(f"!!! Model training for {args.epochs}" +
-              f" EPOCH{'S' if args.epochs > 1 else ''} !!!")
-        print()
-
         model.fit(args.epochs)
 
         print()

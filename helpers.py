@@ -1,10 +1,9 @@
-def numLayers(size):
+def getNumLayers(size):
     i = 0
     return divideByTwo(size, i)
 
 
 def divideByTwo(n, i):
-    print("Dividing")
     if n == 1:
         return i
     else:

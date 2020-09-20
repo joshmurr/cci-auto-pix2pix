@@ -4,6 +4,7 @@ import time
 import numpy as np
 # import numLayers from utils
 from matplotlib import pyplot as plt
+from helpers import getNumLayers
 
 
 class Model:
@@ -13,10 +14,21 @@ class Model:
         self.input_size = np.append(self.input_size, 1)
         self.output_size = np.array(output_size)
         self.output_size = np.append(self.output_size, 1)
+        self.numDownLayers = getNumLayers(self.input_size[0])
+        self.numUpLayers = getNumLayers(self.output_size[0])
+        print(f"~~~ numDownLayers: {self.numDownLayers}")
+        print(f"~~~ numUpLayers: {self.numUpLayers}")
+        self.down_stack_list, self.up_stack_list = self.createLayersList(
+            self.numDownLayers, self.numUpLayers)
+        print(f"Down Stack: {self.down_stack_list}, " +
+              f"Up Stack: {self.up_stack_list}")
         self._lambda = 100
         self.loss_object = tf.keras.losses.BinaryCrossentropy(from_logits=True)
         self.dataset = dataset
         self.generator = self.Generator()
+
+        self.generator.summary()
+
         self.discriminator = self.Discriminator()
         self.generator_optimizer = tf.keras.optimizers.Adam(2e-4, beta_1=0.5)
         self.discriminator_optimizer = tf.keras.optimizers.Adam(2e-4,
@@ -68,30 +80,23 @@ class Model:
 
         return result
 
+    def createLayersList(self, numDown, numUp):
+        sequence = [512, 512, 512, 512, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1]
+        return sequence[numDown - 1::-1], sequence[1:numUp]
+
     def Generator(self):
         # inputs = tf.keras.layers.Input(shape=[256, 256, 1])
         inputs = tf.keras.layers.Input(shape=self.input_size)
 
+        # Generate Down and Up stacks
         down_stack = [
-            self.downsample(64, 4,
-                            apply_batchnorm=False),  # (bs, 128, 128, 64)
-            self.downsample(128, 4),  # (bs, 64, 64, 128)
-            self.downsample(256, 4),  # (bs, 32, 32, 256)
-            self.downsample(512, 4),  # (bs, 16, 16, 512)
-            self.downsample(512, 4),  # (bs, 8, 8, 512)
-            self.downsample(512, 4),  # (bs, 4, 4, 512)
-            self.downsample(512, 4),  # (bs, 2, 2, 512)
-            self.downsample(512, 4),  # (bs, 1, 1, 512)
+            self.downsample(n, 4, apply_batchnorm=(i != 0))
+            for i, n in enumerate(self.down_stack_list)
         ]
 
         up_stack = [
-            self.upsample(512, 4, apply_dropout=True),  # (bs, 2, 2, 1024)
-            self.upsample(512, 4, apply_dropout=True),  # (bs, 4, 4, 1024)
-            self.upsample(512, 4, apply_dropout=True),  # (bs, 8, 8, 1024)
-            self.upsample(512, 4),  # (bs, 16, 16, 1024)
-            self.upsample(256, 4),  # (bs, 32, 32, 512)
-            self.upsample(128, 4),  # (bs, 64, 64, 256)
-            self.upsample(64, 4),  # (bs, 128, 128, 128)
+            self.upsample(n, 4, apply_dropout=(i < 3))
+            for i, n in enumerate(self.up_stack_list)
         ]
 
         initializer = tf.random_normal_initializer(0., 0.02)
