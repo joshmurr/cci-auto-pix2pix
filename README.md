@@ -14,7 +14,8 @@ A shell script called `frame_extractor.sh` was created to quickly create a datas
 
 ```
 usage: main.py [-h] [-n NAME] [-d DATASET_PATH] [-buf BUFFER_SIZE]
-               [-bs BATCH_SIZE] [-e EPOCHS]
+               [-bs BATCH_SIZE] [-e EPOCHS] [-is INPUT_SIZE] [-os OUTPUT_SIZE]
+               [-dum DUMMY_RUN]
 
 A class based implementation of the Tensorflow pix2pix model.
 
@@ -39,6 +40,14 @@ optional arguments:
                         Number of full training cycles. 50 will yield decent
                         enough results with an image size of 256x256 and a
                         dataset of 1000 images.
+  -is INPUT_SIZE, --input-size INPUT_SIZE
+                        Dimensions of input image. Input single number which
+                        is a power of 2
+  -os OUTPUT_SIZE, --output-size OUTPUT_SIZE
+                        Dimensions of input image. Input single number which
+                        is a power of 2
+  -dum DUMMY_RUN, --dummy-run DUMMY_RUN
+                        Don't actually run a model to check arguments.
 ```
 
 A dataset can be provided to the program via the `--dataset {{directory}}` argument. Given the point of the program is for rapid prototyping, it is advised to only use `.jpg`'s to keep it small and quick. A dataset of approximately 600 - 1000 images works well, any more is unnecessary I think.
