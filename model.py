@@ -1,8 +1,6 @@
 import tensorflow as tf
 import os
 import time
-import numpy as np
-# import numLayers from utils
 from matplotlib import pyplot as plt
 from helpers import getNumLayers
 
@@ -10,24 +8,18 @@ from helpers import getNumLayers
 class Model:
     def __init__(self, dataset, root_dir, input_size, output_size):
         self.output_channels = 3
-        self.input_size = np.array(input_size)
-        self.input_size = np.append(self.input_size, 1)
-        self.output_size = np.array(output_size)
-        self.output_size = np.append(self.output_size, 1)
+        self.input_size = [input_size, input_size, 1]
+        self.output_size = [output_size, output_size, 1]
         self.numDownLayers = getNumLayers(self.input_size[0])
         self.numUpLayers = getNumLayers(self.output_size[0])
-        print(f"~~~ numDownLayers: {self.numDownLayers}")
-        print(f"~~~ numUpLayers: {self.numUpLayers}")
         self.down_stack_list, self.up_stack_list = self.createLayersList(
             self.numDownLayers, self.numUpLayers)
-        print(f"Down Stack: {self.down_stack_list}, " +
-              f"Up Stack: {self.up_stack_list}")
         self._lambda = 100
         self.loss_object = tf.keras.losses.BinaryCrossentropy(from_logits=True)
         self.dataset = dataset
         self.generator = self.Generator()
 
-        self.generator.summary()
+        # self.generator.summary()
 
         self.discriminator = self.Discriminator()
         self.generator_optimizer = tf.keras.optimizers.Adam(2e-4, beta_1=0.5)

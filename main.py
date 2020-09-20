@@ -105,30 +105,12 @@ if __name__ == '__main__':
 
     NAME = args.name
     DATASET_PATH = args.dataset_path
-    INPUT_SIZE = None
-    OUTPUT_SIZE = None
 
-    if not args.input_size[0] == args.input_size[1]:
-        print("Input size must be square!")
-        print()
-        exit()
-
-    elif not args.output_size[0] == args.output_size[1]:
-        print("Output size must be square!")
-        print()
-        exit()
-
-    elif not isPowerOfTwo(args.input_size[0]) or not isPowerOfTwo(
-            args.output_size[0]):
+    if not isPowerOfTwo(args.input_size) or not isPowerOfTwo(args.output_size):
         print("Please stick to an input size or output size" +
               " which is a power of 2!")
         print()
         exit()
-
-    else:
-        INPUT_SIZE = tuple(args.input_size)
-        OUTPUT_SIZE = tuple(args.output_size)
-        print(INPUT_SIZE, OUTPUT_SIZE)
 
     if not args.name:
         print("Using name 'sample' as no name was provided.")
@@ -290,7 +272,7 @@ if __name__ == '__main__':
     from model import Model
     print()
     print("Creating Model...")
-    model = Model(dataset, saves_root, INPUT_SIZE, OUTPUT_SIZE)
+    model = Model(dataset, saves_root, args.input_size, args.output_size)
 
     print()
     print(f"!!! Model training for {args.epochs}" +
