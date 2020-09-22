@@ -2,14 +2,26 @@
 
 set -e
 
-download_script="./downloads.sh"
+echo -e "Downloading youtube-dl...\n\n"
 
-if [ -f $downloads_script ]; then
-  echo "Running downloads.sh..."
-  echo
+sudo wget https://yt-dl.org/downloads/latest/youtube-dl -O /usr/local/bin/youtube-dl
+sudo chmod a+rx /usr/local/bin/youtube-dl
 
-  bash $downloads_script
-fi
+echo -e "Done.\n\n"
+
+echo -e "Updating youtube-dl...\n\n"
+youtube-dl -U
+
+echo -e "Making cci-auto-pix2pix/dataset directory\n\n"
+
+mkdir cci-auto-pix2pix/dataset
+sudo chmod u+x ./cci-auto-pix2pix/frame_extractor.sh
+
+echo -e "Installing bc (Bash Calculator) and ImageMagick...\n\n"
+
+sudo apt install bc imagemagick
+
+echo -e "Done.\n\n"
 
 if [ $? -eq 0 ]; then
   clear
@@ -24,26 +36,21 @@ fi
 
 #  Don't forget to export variables needed in child shell processes.
 
-echo
-echo "Enter the YouTube video ID you would like to use:"
-echo
+echo -e "\nEnter the YouTube video ID you would like to use: "
 
 read -n 11 video_id
 
-echo "Getting download options for video: $video_id"
-echo
+echo -e "\nGetting download options for video: $video_id\n"
 
 youtube-dl -F $video_id > tmp_youtube_info.txt
 
 tail -n +1 tmp_youtube_info.txt
 
-echo
-echo "Enter format code for chosen video download: "
+echo -e "\nEnter format code for chosen video download: "
 
 read $format_code
 
-echo
-echo "Enter output filename: "
+echo -e "\nEnter output filename: "
 
 read $filename
 
@@ -51,13 +58,11 @@ extension=$(tail -n +4 tmp_youtube_info.txt | awk '{print $1":" $2}' | grep $for
 fullname="$filename.$extension"
 
 clear
-echo "Now downloading $fullname..."
-echo
+echo -e "Now downloading $fullname...\n"
 
 youtube-dl -f $format_code -o $fullname $video_id
 
-echo
-echo "Enter number of frames you would like to extract: "
+echo -e "\nEnter number of frames you would like to extract: "
 read num_framees
 
 echo "Enter output dimension (just one number, it will be square): "
