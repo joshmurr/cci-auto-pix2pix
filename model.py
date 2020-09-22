@@ -237,7 +237,7 @@ class Model:
         prediction = model(test_input, training=True)
         plt.figure(figsize=(15, 15))
 
-        display_list = [test_input[0], tar[0], prediction[0]]
+        display_list = [test_input, tar, prediction[0]]
         title = ['Input Image', 'Ground Truth', 'Predicted Image']
 
         for i in range(3):
@@ -254,10 +254,8 @@ class Model:
             if self.notebook:
                 display.clear_output(wait=True)
 
-                for example_input, example_target in (
-                        self.dataset.test_dataset.take(1)):
-                    self.generate_images(self.generator, example_input,
-                                         example_target)
+                for inp, tar in self.dataset.test_dataset.take(1):
+                    self.generate_images(self.generator, inp, tar)
 
             self.save_images(self.generator, self.dataset.test_dataset,
                              os.path.join(self.root_dir, 'figures'), epoch)
