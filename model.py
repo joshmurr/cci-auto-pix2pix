@@ -234,7 +234,7 @@ class Model:
             plt.close()
 
     def generate_images(self, model, test_input, tar):
-        prediction = model.predict(test_input, training=True)
+        prediction = model(test_input, training=True)
         plt.figure(figsize=(15, 15))
 
         display_list = [test_input[0], tar[0], prediction[0]]
