@@ -8,7 +8,7 @@ class Dataset:
         print(kwargs)
         self.path = kwargs['dataset_path']
         self.name = kwargs['name']
-        self.image_size = 256
+        self.image_size = kwargs['input_size']
 
         self.train_dataset, self.test_dataset = self.init_dataset(
             self.path, kwargs['buffer_size'], kwargs['batch_size'])

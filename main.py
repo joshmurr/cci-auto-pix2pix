@@ -250,7 +250,8 @@ if __name__ == '__main__':
     dataset = Dataset(name=NAME,
                       dataset_path=DATASET_PATH,
                       buffer_size=args.buffer_size,
-                      batch_size=args.batch_size)
+                      batch_size=args.batch_size,
+                      image_size=args.input_size)
 
     print()
     print("Creating relevenat directories to save the model, " +
