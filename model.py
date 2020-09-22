@@ -11,7 +11,7 @@ class Model:
     def __init__(self, dataset, root_dir, input_size, output_size, notebook):
         self.output_channels = 3
         self.input_size = [input_size, input_size, 1]
-        self.output_size = [output_size, output_size, 1]
+        self.output_size = [output_size, output_size, 3]
         self.numDownLayers = getNumLayers(self.input_size[0])
         self.numUpLayers = getNumLayers(self.output_size[0])
         self.down_stack_list, self.up_stack_list = self.createLayersList(
@@ -149,7 +149,8 @@ class Model:
         initializer = tf.random_normal_initializer(0., 0.02)
 
         inp = tf.keras.layers.Input(shape=self.input_size, name='input_image')
-        tar = tf.keras.layers.Input(shape=self.input_size, name='target_image')
+        tar = tf.keras.layers.Input(shape=self.output_size,
+                                    name='target_image')
 
         # (bs, input_shape, input_shape, channels*2)
         x = tf.keras.layers.concatenate([inp, tar])
@@ -164,6 +165,8 @@ class Model:
         # Recursively traverse generated downstack to
         # reach shape of (bs, 32, 32, 256)
         down3 = self.traverseDownStack(x, down_stack, 0)
+
+        print(f"down2 shape: {down3.shape}")
 
         zero_pad1 = tf.keras.layers.ZeroPadding2D()(down3)  # (bs, 34, 34, 256)
         conv = tf.keras.layers.Conv2D(512,
