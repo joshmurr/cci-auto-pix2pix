@@ -8,7 +8,7 @@ if [ -f $downloads_script ]; then
   echo "Running downloads.sh..."
   echo
 
-  $downloads_script
+  bash $downloads_script
 fi
 
 if [ $? -eq 0 ]; then
