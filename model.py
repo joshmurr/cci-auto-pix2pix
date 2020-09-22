@@ -233,7 +233,7 @@ class Model:
             fig.savefig('{}/{}.png'.format(dir, n))
             plt.close()
 
-    def generate_images(model, test_input, tar):
+    def generate_images(self, model, test_input, tar):
         prediction = model.predict(test_input, training=True)
         plt.figure(figsize=(15, 15))
 
@@ -254,8 +254,8 @@ class Model:
             if self.notebook:
                 display.clear_output(wait=True)
 
-                for example_input, example_target in self.dataset.test_dataset.take(
-                        1):
+                for example_input, example_target in (
+                        self.dataset.test_dataset.take(1)):
                     self.generate_images(self.generator, example_input,
                                          example_target)
 
