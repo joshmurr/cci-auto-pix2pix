@@ -2,11 +2,12 @@ import tensorflow as tf
 import os
 import time
 from matplotlib import pyplot as plt
+from IPython import display
 from helpers import getNumLayers
 
 
 class Model:
-    def __init__(self, dataset, root_dir, input_size, output_size):
+    def __init__(self, dataset, root_dir, input_size, output_size, notebook):
         self.output_channels = 3
         self.input_size = [input_size, input_size, 1]
         self.output_size = [output_size, output_size, 1]
@@ -15,6 +16,7 @@ class Model:
         self.down_stack_list, self.up_stack_list = self.createLayersList(
             self.numDownLayers, self.numUpLayers)
         self._lambda = 100
+        self.notebook = notebook
         self.loss_object = tf.keras.losses.BinaryCrossentropy(from_logits=True)
         self.dataset = dataset
         self.generator = self.Generator()
@@ -130,18 +132,37 @@ class Model:
 
         return total_gen_loss, gan_loss, l1_loss
 
+    def traverseDownStack(self, res, funcs, i):
+        """
+        A recursive function which traverses through the stack of
+        functions given as an array, passing the result of the previous to the
+        next function.
+        """
+        if i == len(funcs):
+            return res
+        else:
+            new_res = funcs[i](res)
+            return self.traverseDownStack(new_res, funcs, i + 1)
+
     def Discriminator(self):
         initializer = tf.random_normal_initializer(0., 0.02)
 
-        inp = tf.keras.layers.Input(shape=[256, 256, 1], name='input_image')
-        tar = tf.keras.layers.Input(shape=[256, 256, 3], name='target_image')
+        inp = tf.keras.layers.Input(shape=self.input_size, name='input_image')
+        tar = tf.keras.layers.Input(shape=self.input_size, name='target_image')
 
-        x = tf.keras.layers.concatenate([inp,
-                                         tar])  # (bs, 256, 256, channels*2)
+        # (bs, input_shape, input_shape, channels*2)
+        x = tf.keras.layers.concatenate([inp, tar])
 
-        down1 = self.downsample(64, 4, False)(x)  # (bs, 128, 128, 64)
-        down2 = self.downsample(128, 4)(down1)  # (bs, 64, 64, 128)
-        down3 = self.downsample(256, 4)(down2)  # (bs, 32, 32, 256)
+        num_down_stack = self.numDownLayers - 5
+
+        down_stack = [
+            self.downsample(n, 4, apply_batchnorm=(i != 0))
+            for i, n in enumerate(self.down_stack_list[:num_down_stack])
+        ]
+
+        # Recursively traverse generated downstack to
+        # reach shape of (bs, 32, 32, 256)
+        down3 = self.traverseDownStack(x, down_stack, 0)
 
         zero_pad1 = tf.keras.layers.ZeroPadding2D()(down3)  # (bs, 34, 34, 256)
         conv = tf.keras.layers.Conv2D(512,
@@ -212,9 +233,30 @@ class Model:
             fig.savefig('{}/{}.png'.format(dir, n))
             plt.close()
 
+    def generate_images(model, test_input, tar):
+        prediction = model.predict(test_input, training=True)
+        plt.figure(figsize=(15, 15))
+
+        display_list = [test_input[0], tar[0], prediction[0]]
+        title = ['Input Image', 'Ground Truth', 'Predicted Image']
+
+        for i in range(3):
+            plt.subplot(1, 3, i + 1)
+            plt.title(title[i])
+            plt.imshow(display_list[i] * 0.5 + 0.5)
+            plt.axis('off')
+        plt.show()
+
     def fit(self, epochs):
         for epoch in range(epochs):
             start = time.time()
+
+            if self.notebook:
+                display.clear_output(wait=True)
+
+                for example_input, example_target in self.dataset.take(1):
+                    self.generate_images(self.generator, example_input,
+                                         example_target)
 
             self.save_images(self.generator, self.dataset.test_dataset,
                              os.path.join(self.root_dir, 'figures'), epoch)

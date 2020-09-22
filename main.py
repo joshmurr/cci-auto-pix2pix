@@ -58,6 +58,13 @@ parser.add_argument(
     "is a power of 2",
     type=int,
     default=256)
+parser.add_argument(
+    "-nb",
+    "--notebook",
+    help="Set to True if using an interactive Python notebook like Google " +
+    "Colab to view sample output images as the model trains",
+    type=bool,
+    default=False)
 parser.add_argument("-dum",
                     "--dummy-run",
                     help="Don't actually run a model to check arguments.",
@@ -272,7 +279,8 @@ if __name__ == '__main__':
     from model import Model
     print()
     print("Creating Model...")
-    model = Model(dataset, saves_root, args.input_size, args.output_size)
+    model = Model(dataset, saves_root, args.input_size, args.output_size,
+                  args.notebook)
 
     print()
     print(f"!!! Model training for {args.epochs}" +
