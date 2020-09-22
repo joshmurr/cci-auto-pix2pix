@@ -254,7 +254,8 @@ class Model:
             if self.notebook:
                 display.clear_output(wait=True)
 
-                for example_input, example_target in self.dataset.take(1):
+                for example_input, example_target in self.dataset.test_dataset.take(
+                        1):
                     self.generate_images(self.generator, example_input,
                                          example_target)
 
