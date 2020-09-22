@@ -2,6 +2,8 @@
 
 set -e
 
+clear
+
 printf "Downloading youtube-dl...\n\n"
 
 sudo wget https://yt-dl.org/downloads/latest/youtube-dl -O /usr/local/bin/youtube-dl
