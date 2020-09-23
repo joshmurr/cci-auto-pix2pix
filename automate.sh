@@ -54,6 +54,16 @@ echo -e "\nEnter output filename: "
 
 read filename
 
+if [ -z $filename ]; then # true if empty string
+  echo -e "\nPlease re-enter filename: "
+  read filename
+fi
+
+if [ -z $format_code ]; then
+  echo -e "\nPlease re-enter format code: "
+  read format_code
+fi
+
 extension=$(tail -n +4 tmp_youtube_info.txt | awk '{print $1":" $2}' | grep $format_code | cut -d':' -f 2)
 
 #echo -e "Filename: $filename\n"
