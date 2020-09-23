@@ -78,7 +78,7 @@ echo -e "Now downloading ${fullname}...\n"
 youtube-dl -f $format_code -o $fullname $video_id
 
 echo -e "\nEnter number of frames you would like to extract: "
-read num_framees
+read num_frames
 
 echo "Enter output dimension (just one number, it will be square): "
 read dimension
