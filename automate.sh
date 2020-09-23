@@ -14,10 +14,10 @@ youtube-dl -U
 
 echo -e "Making cci-auto-pix2pix/dataset directory\n\n"
 
-if [ ! -d /cci-auto-pix2pix/dataset ]; then
-  mkdir cci-auto-pix2pix/dataset
+if [ ! -d ./cci-auto-pix2pix/dataset ]; then
+  mkdir ./cci-auto-pix2pix/dataset
 fi
-sudo chmod u+x /cci-auto-pix2pix/frame_extractor.sh
+sudo chmod u+x ./cci-auto-pix2pix/frame_extractor.sh
 
 echo -e "Installing bc (Bash Calculator) and ImageMagick...\n\n"
 
@@ -86,8 +86,8 @@ read dimension
 clear
 echo "Now extracting frames..."
 
-if [ -f ./frame_extractor.sh ]; then
-  ./frame_extractor.sh ${fullname} ./dataset ${num_frames} -1:${dimension}
+if [ -f ./cci-auto-pix2pix/frame_extractor.sh ]; then
+  ./cci-auto-pix2pix/frame_extractor.sh ${fullname} ./cci-auto-pix2pix/dataset ${num_frames} -1:${dimension}
 else
   echo -e "Error finding 'frame_extractor.sh' script!\n\n"
   exit 1
@@ -103,4 +103,4 @@ read batch_size
 
 echo -e "\nNow running the Python model script! Good luck!...\n\n"
 
-python3 ./main.py -n ${filename} -e ${epochs} -d ./dataset -is ${dimension} -os ${dimension} -bs ${batch_size}
+python3 ./cci-auto-pix2pix/main.py -n ${filename} -e ${epochs} -d ./cci-auto-pix2pix/dataset -is ${dimension} -os ${dimension} -bs ${batch_size}
