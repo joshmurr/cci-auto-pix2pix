@@ -10,7 +10,7 @@ SCALE=$4
 secs=0
 i=0
 extensions="webm|mov|mp4"
-TMP=/tmp/tmp.jpg
+TMP=./tmp.jpg
 
 suffix=${FILE##*.} # This trims everything from the front until a '.', greedily.
 
