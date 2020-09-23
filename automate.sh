@@ -14,8 +14,10 @@ youtube-dl -U
 
 echo -e "Making cci-auto-pix2pix/dataset directory\n\n"
 
-mkdir cci-auto-pix2pix/dataset
-sudo chmod u+x ./cci-auto-pix2pix/frame_extractor.sh
+if [ ! -d /cci-auto-pix2pix/dataset ]; then
+  mkdir cci-auto-pix2pix/dataset
+fi
+sudo chmod u+x /cci-auto-pix2pix/frame_extractor.sh
 
 echo -e "Installing bc (Bash Calculator) and ImageMagick...\n\n"
 
