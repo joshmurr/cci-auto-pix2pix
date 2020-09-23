@@ -48,17 +48,20 @@ tail -n +1 tmp_youtube_info.txt
 
 echo -e "\nEnter format code for chosen video download: "
 
-read $format_code
+read format_code
 
 echo -e "\nEnter output filename: "
 
-read $filename
+read filename
 
 extension=$(tail -n +4 tmp_youtube_info.txt | awk '{print $1":" $2}' | grep $format_code | cut -d':' -f 2)
-fullname="$filename.$extension"
 
-clear
-echo -e "Now downloading $fullname...\n"
+#echo -e "Filename: $filename\n"
+#echo -e "Extension: $extension\n"
+fullname="${filename}.${extension}"
+
+#clear
+echo -e "Now downloading ${fullname}...\n"
 
 youtube-dl -f $format_code -o $fullname $video_id
 
