@@ -86,8 +86,10 @@ read dimension
 clear
 echo "Now extracting frames..."
 
+scale="-1:${dimension}"
+
 if [ -f ./cci-auto-pix2pix/frame_extractor.sh ]; then
-  ./cci-auto-pix2pix/frame_extractor.sh ${fullname} ./cci-auto-pix2pix/dataset ${num_frames} -1:${dimension}
+  ./cci-auto-pix2pix/frame_extractor.sh ${fullname} ./cci-auto-pix2pix/dataset ${num_frames} ${scale}
 else
   echo -e "Error finding 'frame_extractor.sh' script!\n\n"
   exit 1
