@@ -1,5 +1,9 @@
 ## Auto pix2pix
 
+---
+# This relies on [Youtube-DL](https://youtube-dl.org/) which has recently been taken down (today being 27/10/20). The script downloads from Youtube-DL directly, so it might be fine, but I haven't checked. I should do that.
+---
+
 Packaging up the [Tensorflow implementation][tf-p2p] of the [pix2pix][p2p-paper] model into a pair of classes to help simplify and speed up the process of training and saving models for rapid protoyping. The model has been modified in the style of [Learning to See][lts-paper] by Memo Akten et al. The modification allows for a dataset of single images (rather than pairs) and a preprocessing of the image to a blurry-greyscale version is used to train the model.
 
 ![Greyscale2Flower](./flower.png)
