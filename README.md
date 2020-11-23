@@ -117,6 +117,12 @@ drive.mount('/content/drive')
 
 ## [A full run through on Google Colab can be seen here.](https://github.com/joshmurr/cci-auto-pix2pix/blob/master/pix2pix_fungus.ipynb)
 
+---
+
+## Fully Automated
+
+`autmate.sh` puts all the above together into a single interactive script. When run it'll download all the requirements for you, prompt you for the ID of a YouTube video you want to use, download it, extract frames, prompt for some options about the model and then train it for you. One thing that isn't there yet is autmatic saving to Google Drive which I found to be _very_ useful. If you leave Colab idle for too long it'll end the session and you'll lose all your work - the code is still there but the training will be lost as will any files on disk (in Colab).
+
 
 [tf-p2p]: https://www.tensorflow.org/tutorials/generative/pix2pix
 [p2p-paper]: https://arxiv.org/pdf/1611.07004.pdf
